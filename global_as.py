@@ -4,11 +4,11 @@ from scipy import stats
 from scipy.stats import qmc
 
 ### Calculate the matrix C
-def dFunc0(x,Func,M2,shiftedSobol):
+def dFunc0(x,Func,M2,shiftedSobol=True):
     chi,dim = x.shape[0],x.shape[1]
     temp = np.zeros((dim,chi*M2))
 
-    if(shiftedSobol = True):
+    if(shiftedSobol == True):
         rand_add = qmc.Sobol(dim, scramble=False).random(M2+1)[1:]        
         for i in range(M2):       
             xe = np.tile(x.transpose(), dim).transpose()*(1-np.repeat(np.array(np.identity(dim)), chi, axis=0))

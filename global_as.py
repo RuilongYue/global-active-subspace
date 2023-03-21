@@ -2,9 +2,11 @@ import numpy as np
 import numpy.random as R
 from scipy import stats
 from scipy.stats import qmc
+import chaospy as chaospy
+from scipy.special import comb
 
-### Calculate the matrix C
-def dFunc0(x,Func,M2,shiftedSobol=True):
+# Calculate the matrix C
+def dFunc0(x,Func,M2,shiftedSobol):
     chi,dim = x.shape[0],x.shape[1]
     temp = np.zeros((dim,chi*M2))
 
@@ -25,12 +27,52 @@ def dFunc0(x,Func,M2,shiftedSobol=True):
     
     return temp/M2
 
+# Estimate the matrix Phi
+def Phi_est(X, expo, coef, P):
+    Num = X.shape[0]
+    dim = X.shape[1]
+    return np.dot(np.prod((np.tile(X, P)**expo.flatten()).reshape((Num*P, dim)),axis = 1).reshape((Num, P))
+               ,np.array(coef)).T
 
-### Calculate eigenvalue decomposition
-def GAS(Func,dim,chi,M1,M2=10,shiftedSobol):
+def Funy(z,z1,u):
+    dim = u.shape[0]
+    dim1 = z.shape[1]
+    chi = z.shape[0]
+    f1 = Func(np.dot(z,u[:,:dim1].transpose())+np.dot(z1,u[:,dim1:].transpose()))
+    return f1
+
+# Estimate k hat
+def estimate_k_reg1(z,z1,u,poly,P):   
+    phi = Phi_est(z, poly.exponents, poly.coefficients,P)
+    khat = np.linalg.inv(phi @ np.transpose(phi)) @ phi @ Funy(z,z1,u)
+    return khat
+
+
+# Calculate eigenvalue decomposition
+def GAS(Func,dim,chi,M1,M2,shiftedSobol=True):
     z = R.uniform(0, 1, (int(chi/M1), dim))
     deriv = dFunc0(z,Func,M2,shiftedSobol)
     deriv /= np.sqrt(chi)
     u, s, vh = np.linalg.svd(deriv.astype(float), full_matrices=True) 
     s = s**2
     return u, s
+
+# Estimate the expectation from PCE
+def GAS_PCE(Func,Num_exp, N, p, dim, dim1, u): 
+    z1 = []
+    for i in range(40):
+        z1.append(R.normal(0, 1, (N, dim)))
+    
+    P = int(comb(p+dim1, dim1))
+    distribution = chaospy.J(chaospy.Normal(0, 1))
+    for i in range(dim1-1):
+        distribution = chaospy.J(distribution, chaospy.Normal(0, 1))
+    poly, norms = chaospy.generate_expansion(p, distribution, retall=True)
+    poly/=np.sqrt(norms)    
+    
+    PCE = np.zeros(Num_exp)
+    for i in range(Num_exp):   
+        kii = estimate_k_reg1(z1[i][:,:dim1],z1[i][:,dim1:],u,poly,P)
+        PCE[i] = kii[0]
+    
+    return np.mean(PCE)

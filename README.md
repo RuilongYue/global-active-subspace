@@ -35,3 +35,21 @@ To use the global active subspace method, include the global_as.py and use the f
 >M1, M2: parameters used when approximating $\pmb C$.
 >
 >shiftedSobol: a bool value determines whether we use the shifted Sobol' sequence when generating $v^{(i,j)}$'s. 
+
+To estimate $E[f(\pmb z)]$, use the function GAS_PCE().
+
+>def GAS_PCE(Func, Num_exp, N, p, dim, dim1, u): 
+>
+>Func: the function $f(\pmb z)$.
+>
+>Num_exp: number of experiments. Usually takes value such as 40.
+>
+>N: sample size when constructing PCE.
+>
+>p: the highest degree of PCE.
+>
+>dim: dimension of the input function, $d$.
+>
+>dim1: dimension of the reduced space, $d_1$.
+>
+>u: eigenvector matrix derived from the function GAS(). 

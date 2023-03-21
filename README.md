@@ -36,7 +36,7 @@ To use the global active subspace method, include the global_as.py and use the f
 >
 >shiftedSobol: a bool value determines whether we use the shifted Sobol' sequence when generating $v^{(i,j)}$'s. 
 
-To estimate $E[f(\pmb z)]$, use the function GAS_PCE().
+To construct PCE model and estimate $E[f(\pmb z)]$, use the function GAS_PCE().
 
 >def GAS_PCE(Func, Num_exp, N, p, dim, dim1, u): 
 >

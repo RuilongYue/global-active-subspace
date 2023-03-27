@@ -9,7 +9,7 @@ $$D_{\pmb z}f(\pmb v,\pmb z)=[D_{\pmb z,1}f(v_{1},\pmb z),...,D_{\pmb z,d}f(v_{d
 where
 $$D_{\pmb z,i}f(v_{i},\pmb z)=(f(\pmb v_{\{i\}},\pmb z_{-\{i\}})-f(\pmb z))/(v_{i}-z_{i}).$$
 
-Here $\pmb v_{\{i\}}$ corresponds to the $i$th input of vector $\pmb v$, and $\pmb z_{-\{i\}}$ is the vector of inputs corresponding to those indices in the complement of $\{i\}$. 
+Here $\pmb v_{\{i\}}$ corresponds to the $i$ th input of vector $\pmb v$, and $\pmb z_{-\{i\}}$ is the vector of inputs corresponding to those indices in the complement of $\{i\}$. 
 
 Define the $d\times d$ matrix $\pmb C$ by
 $$\pmb C=E[E[(D_{\pmb z}f)(D_{\pmb z}f)^T|\pmb z]].$$

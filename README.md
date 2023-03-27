@@ -32,7 +32,7 @@ $$
 
 
 To estimate the matrix $\pmb C$, we use the following approximation:
-$$\hat{\pmb C}=\frac1 {M_1M_2}\sum_{i=1}^{M_1}\sum_{j=1}^{M_2}(D_{\pmb z^{(i)}}f(\pmb v^{(i,j)}, \pmb z^{(i)}))(D_{\pmb z^{(i)}}f(\pmb v^{(i,j)}, \pmb z^{(i)}))^T.$$
+$$\pmb{\hat C}=\frac1 {M_1M_2}\sum_{i=1}^{M_1}\sum_{j=1}^{M_2}(D_{\pmb z^{(i)}}f(\pmb v^{(i,j)}, \pmb z^{(i)}))(D_{\pmb z^{(i)}}f(\pmb v^{(i,j)}, \pmb z^{(i)}))^T.$$
 
 
 ## Usage

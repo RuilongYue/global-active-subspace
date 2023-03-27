@@ -1,4 +1,4 @@
-# global-active-subspace
+# The Global Active Subspace Method
 ## Introduction
 Global active subspace (GAS) method is a generalization of active subspace (AS) method by replacing the matrix C with more "global" information. Theoretical results and experiments show that GAS is better when the test function has uncertainties, or it's discontinuous, and is giving similar results for ordinary cases with AS method.
 
@@ -24,7 +24,7 @@ $$\hat{\pmb C}=\frac1 {M_1M_2}\sum_{i=1}^{M_1}\sum_{j=1}^{M_2}(D_{\pmb z^{(i)}}f
 ## Usage
 To use the global active subspace method, include the global_as.py and use the function GAS(). 
 
->GAS(Func, dim, chi, M1, M2=10, shiftedSobol):
+>GAS(Func, dim, chi, M1, M2, shiftedSobol=True):
 >
 >Func: an arbitrary function takes a chi $\times$ dim input matrix as input, and gives an output vector of length chi.
 >
@@ -38,18 +38,20 @@ To use the global active subspace method, include the global_as.py and use the f
 
 To construct PCE model and estimate $E[f(\pmb z)]$, use the function GAS_PCE().
 
->def GAS_PCE(Func, Num_exp, N, p, dim, dim1, u): 
+>GAS_PCE(Func, Num_exp, z1, dim1, u, exponents, coefficients, P):
 >
 >Func: the function $f(\pmb z)$.
 >
->Num_exp: number of experiments. Usually takes value such as 40.
+>Num_exp: number of experiments. Usually takes value such as $40$.
 >
->N: sample size when constructing PCE.
->
->p: the highest degree of PCE.
->
->dim: dimension of the input function, $d$.
+>z1: list of sampled points with length to be Num_exp.
 >
 >dim1: dimension of the reduced space, $d_1$.
 >
 >u: eigenvector matrix derived from the function GAS(). 
+>
+>exponents: exponent list of the polynomial chaos, see the package numpoly.
+>
+>coefficients: coefficient list of the polynomial chaos, see the package numpoly.
+>
+>P: number of terms of the polynomial chaos.

@@ -17,7 +17,7 @@ $$\pmb C=E[E[(D_{\pmb z}f)(D_{\pmb z}f)^T|\pmb z]].$$
 Do the eigenvalue decomposition of $\pmb C$ and partition the eigenvalues and eigenvectors into two bloacks, we get the global active subspace method.
 $$\pmb C=\pmb U\Lambda \pmb U^T,\Lambda=diag(\lambda_1,...,\lambda_d), \lambda_1\geq...\geq \lambda_d\geq 0.$$
 
-\begin{equation}
+$$
 \Lambda=\left[
 \begin{array}{cc}
     \Lambda_1 &  \\
@@ -28,8 +28,7 @@ $$\pmb C=\pmb U\Lambda \pmb U^T,\Lambda=diag(\lambda_1,...,\lambda_d), \lambda_1
 \begin{array}{cc}
     \pmb{U}_1 &  \pmb{U}_2
 \end{array}
-\right],
-\end{equation}
+\right].$$
 
 
 To estimate the matrix $\pmb C$, we use the following approximation:
@@ -37,7 +36,7 @@ $$\hat{\pmb C}=\frac1 {M_1M_2}\sum_{i=1}^{M_1}\sum_{j=1}^{M_2}(D_{\pmb z^{(i)}}f
 
 
 ## Usage
-To use the global active subspace method, include the global_as.py and use the function GAS(). 
+To apply the global active subspace method, include the file global_as.py and use the function GAS(). 
 
 >GAS(Func, dim, chi, M1, M2, shiftedSobol=True):
 >

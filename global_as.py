@@ -4,9 +4,10 @@ from scipy import stats
 from scipy.stats import qmc
 import chaospy as chaospy
 from scipy.special import comb
+from scipy.stats import norm
 
 # Calculate the matrix C
-def dFunc0(x,Func,M2,shiftedSobol):
+def dFunc0(x,Func,M2,shiftedSobol=True):
     chi,dim = x.shape[0],x.shape[1]
     temp = np.zeros((dim,chi*M2))
 
@@ -14,18 +15,18 @@ def dFunc0(x,Func,M2,shiftedSobol):
         rand_add = qmc.Sobol(dim, scramble=False).random(M2+1)[1:]        
         for i in range(M2):       
             xe = np.tile(x.transpose(), dim).transpose()*(1-np.repeat(np.array(np.identity(dim)), chi, axis=0))
-            rand = (x+rand_add[i])%1
+            rand = norm.ppf((norm.cdf(x)+rand_add[i])%1)
             xe += rand.T.reshape(dim*chi,1)*np.repeat(np.array(np.identity(dim)), chi, axis=0)
             temp[:,i*(chi):(i+1)*(chi)] = ((Func(xe)-np.tile(Func(x),dim))/np.sum(xe-np.tile(x.transpose(),dim).transpose(),axis=1)).reshape(dim,chi)
             
     else:
         for i in range(M2):       
             xe = np.tile(x.transpose(), dim).transpose()*(1-np.repeat(np.array(np.identity(dim)), chi, axis=0))
-            rand = R.uniform(0,1,(chi,dim))
+            rand = R.normal(0,1,(chi,dim))
             xe += rand.T.reshape(dim*chi,1)*np.repeat(np.array(np.identity(dim)), chi, axis=0)
             temp[:,i*(chi):(i+1)*(chi)] = ((Func(xe)-np.tile(Func(x),dim))/np.sum(xe-np.tile(x.transpose(),dim).transpose(),axis=1)).reshape(dim,chi)
     
-    return temp/M2
+    return temp
 
 # Estimate the matrix Phi
 def Phi_est(X, expo, coef, P):
@@ -34,7 +35,7 @@ def Phi_est(X, expo, coef, P):
     return np.dot(np.prod((np.tile(X, P)**expo.flatten()).reshape((Num*P, dim)),axis = 1).reshape((Num, P))
                ,np.array(coef)).T
 
-def Funy(z,z1,u):
+def Funy(z,z1,u,Func):
     dim = u.shape[0]
     dim1 = z.shape[1]
     chi = z.shape[0]
@@ -42,15 +43,15 @@ def Funy(z,z1,u):
     return f1
 
 # Estimate k hat
-def estimate_k_reg1(z,z1,u,poly,P):   
-    phi = Phi_est(z, poly.exponents, poly.coefficients,P)
-    khat = np.linalg.inv(phi @ np.transpose(phi)) @ phi @ Funy(z,z1,u)
+def estimate_k_reg1(z,z1,u, exponents, coefficients, P, Func):   
+    phi = Phi_est(z, exponents, coefficients,P)
+    khat = np.linalg.inv(phi @ np.transpose(phi)) @ phi @ Funy(z,z1,u,Func)
     return khat
 
 
 # Calculate eigenvalue decomposition
 def GAS(Func,dim,chi,M1,M2,shiftedSobol=True):
-    z = R.uniform(0, 1, (int(chi/M1), dim))
+    z = R.normal(0, 1, (M1, dim))
     deriv = dFunc0(z,Func,M2,shiftedSobol)
     deriv /= np.sqrt(chi)
     u, s, vh = np.linalg.svd(deriv.astype(float), full_matrices=True) 
@@ -58,21 +59,9 @@ def GAS(Func,dim,chi,M1,M2,shiftedSobol=True):
     return u, s
 
 # Estimate the expectation from PCE
-def GAS_PCE(Func,Num_exp, N, p, dim, dim1, u): 
-    z1 = []
-    for i in range(40):
-        z1.append(R.normal(0, 1, (N, dim)))
-    
-    P = int(comb(p+dim1, dim1))
-    distribution = chaospy.J(chaospy.Normal(0, 1))
-    for i in range(dim1-1):
-        distribution = chaospy.J(distribution, chaospy.Normal(0, 1))
-    poly, norms = chaospy.generate_expansion(p, distribution, retall=True)
-    poly/=np.sqrt(norms)    
-    
+def GAS_PCE(Func, Num_exp, z1, dim1, u, exponents, coefficients, P): 
     PCE = np.zeros(Num_exp)
     for i in range(Num_exp):   
-        kii = estimate_k_reg1(z1[i][:,:dim1],z1[i][:,dim1:],u,poly,P)
-        PCE[i] = kii[0]
-    
-    return np.mean(PCE)
+        kii = estimate_k_reg1(z1[i][:,:dim1], z1[i][:,dim1:], u, exponents, coefficients, P, Func)
+        PCE[i] = kii[0]    
+    return PCE

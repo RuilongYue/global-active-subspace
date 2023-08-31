@@ -53,7 +53,7 @@ In this repo, there is one .py file implementing Algorithm 2.1 in Yue and Okten 
 
 To apply the global active subspace method, include the file global_as.py and use the function GAS(). 
 
->GAS(Func, dim, chi, M1, M2, shiftedSobol=True):
+>GAS(Func, dim, chi, M1, M2, shiftedSobol=True, distribution='normal'):
 >
 >Func: an arbitrary function takes a chi $\times$ dim input matrix as input, and gives an output vector of length chi.
 >
@@ -63,7 +63,9 @@ To apply the global active subspace method, include the file global_as.py and us
 >
 >M1, M2: parameters used when approximating $\pmb C$.
 >
->shiftedSobol: a bool value determines whether we use the shifted Sobol' sequence when generating $v^{(i,j)}$'s. 
+>shiftedSobol: a bool value determines whether we use the shifted Sobol' sequence when generating $v^{(i,j)}$'s.
+>
+>distribution: default value is 'normal'. Can be changed to 'uniform' based on distribution in the problem.
 
 To construct PCE model and estimate $E[f(\pmb z)]$, use the function GAS_PCE() in global_as.py.
 
@@ -88,4 +90,4 @@ To construct PCE model and estimate $E[f(\pmb z)]$, use the function GAS_PCE() i
 
 ## References
 
-[1]. The Global Active Subspace Method. (link to be added)
+[1]. The Global Active Subspace Method. (https://arxiv.org/abs/2304.14142)

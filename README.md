@@ -67,6 +67,18 @@ To apply the global active subspace method, include the file global_as.py and us
 >
 >distribution: default value is 'normal'. Can be changed to 'uniform' based on distribution in the problem.
 
+To estimate the $\Gamma_i $'s in global active subspace method, include the file global_as.py and use the function compute_C_u_1(). 
+
+>compute_C_u_1(x,Func,u,M2):
+>
+>x: the input matrix with shape of chi $\times$ dim.
+>
+>Func: an arbitrary function takes a chi $\times$ dim input matrix as input, and gives an output vector of length chi.
+>
+>u: matrix $U$ from global active subspace method.
+>
+>M2: parameter used when approximating $\Gamma_i$'s.
+
 To construct PCE model and estimate $E[f(\pmb z)]$, use the function GAS_PCE() in global_as.py.
 
 >GAS_PCE(Func, Num_exp, z1, dim1, u, exponents, coefficients, P):
@@ -86,7 +98,7 @@ To construct PCE model and estimate $E[f(\pmb z)]$, use the function GAS_PCE() i
 >coefficients: coefficient list of the polynomial chaos, see the package numpoly.
 >
 >P: number of terms of the polynomial chaos.
-
+>
 
 ## References
 

@@ -45,7 +45,7 @@ def GAS(Func,dim,chi,M1,M2,shiftedSobol=True,distribution='normal'):
     return u, s
 
 # Estimate \Gamma_i's
-def compute_C_u_1(x,Func,u,s,M2):
+def compute_C_u_1(x,Func,u,M2):
     '''
     ### Explanation of finding the mean of conditional expectation
     # Find direction v1

@@ -44,6 +44,31 @@ def GAS(Func,dim,chi,M1,M2,shiftedSobol=True,distribution='normal'):
     s = s**2
     return u, s
 
+# Estimate \Gamma_i's
+def compute_C_u_1(x,Func,u,s,M2):
+    '''
+    ### Explanation of finding the mean of conditional expectation
+    # Find direction v1
+    # v1*u1 + ...+ vn*un = 0
+    # av1 = z1 + bu1
+    # av2 = z2 + bu2
+    # ...
+    # avn = zn + bun
+    # z1^2 + ... + zn^2 = b^2 + a^2
+    # a, b, v1,...,vn are unknown
+    '''
+    expect = []
+    f = Func(x)
+    qmc_sequence = qmc.Sobol(1, scramble=False).random(M2+1)[1:]
+    for j in range(x.shape[1]):
+        expecttemp = 0
+        for i in range(M2):
+            dist = (norm.ppf((norm.cdf(np.dot(x,u[:,j:(j+1)]))+qmc_sequence[i])%1) - np.dot(x,u[:,j:(j+1)]))
+            x_mod = x + dist*u[:,j:(j+1)].transpose()
+            f_mod = Func(x_mod)
+            expecttemp += np.sum(((f_mod - f)/(dist.flatten()))**2)
+        expect.append(expecttemp/M2/x.shape[0])
+    return expect
 
 
 # Estimate the matrix Phi
